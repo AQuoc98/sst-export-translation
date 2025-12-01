@@ -47,7 +47,41 @@ ipcMain.handle("select-destination", async () => {
 });
 
 // Handle export translation
-ipcMain.handle("export-translation", async (event, inputFile, outputDir) => {
+ipcMain.handle(
+  "export-translation",
+  async (event, inputFile, outputDir, template = "FD") => {
+    try {
+      // Route to appropriate template handler
+      switch (template) {
+        case "FD":
+          return await exportFDTemplate(inputFile, outputDir);
+        case "ACE":
+          return {
+            success: false,
+            message: "ACE template not yet implemented",
+          };
+        case "AGPD":
+          return {
+            success: false,
+            message: "AGPD template not yet implemented",
+          };
+        default:
+          return {
+            success: false,
+            message: `Unknown template: ${template}`,
+          };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  }
+);
+
+// FD Template Export Logic
+async function exportFDTemplate(inputFile, outputDir) {
   try {
     const sheetName = "json_tranlsation";
 
@@ -200,7 +234,7 @@ ipcMain.handle("export-translation", async (event, inputFile, outputDir) => {
 
     return {
       success: true,
-      message: "Export completed successfully!",
+      message: "Export completed successfully (FD Template)!",
       filesCreated: createdFiles.length,
       files: createdFiles,
     };
@@ -210,7 +244,7 @@ ipcMain.handle("export-translation", async (event, inputFile, outputDir) => {
       message: error.message,
     };
   }
-});
+}
 
 app.whenReady().then(() => {
   createWindow();

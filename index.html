@@ -19,6 +19,15 @@
 
     <form id="export-form">
       <div class="form-group">
+        <label for="template">Template:</label>
+        <select id="template" name="template">
+          <option value="FD" selected>FD</option>
+          <option value="ACE">ACE</option>
+          <option value="AGPD">AGPD</option>
+        </select>
+      </div>
+
+      <div class="form-group">
         <label for="inputFile">Input File:</label>
         <div class="file-input-wrapper">
           <input
@@ -44,6 +53,9 @@
           />
           <button type="button" class="secondary" id="selectDestBtn">
             Browse
+          </button>
+          <button type="button" class="secondary" id="clearDestBtn">
+            Clear
           </button>
         </div>
       </div>

@@ -1,11 +1,22 @@
 const selectFileBtn = document.getElementById("selectFileBtn");
 const selectDestBtn = document.getElementById("selectDestBtn");
+const clearDestBtn = document.getElementById("clearDestBtn");
 const inputFileField = document.getElementById("inputFile");
 const destinationField = document.getElementById("destination");
+const templateSelect = document.getElementById("template");
 const exportForm = document.getElementById("export-form");
 
 let selectedFilePath = null;
 let selectedDestPath = null;
+
+// Load saved destination path on startup
+window.addEventListener("DOMContentLoaded", () => {
+  const savedDestPath = localStorage.getItem("savedDestinationPath");
+  if (savedDestPath) {
+    selectedDestPath = savedDestPath;
+    destinationField.value = savedDestPath;
+  }
+});
 
 // Handle file selection
 selectFileBtn.addEventListener("click", async () => {
@@ -22,7 +33,16 @@ selectDestBtn.addEventListener("click", async () => {
   if (destPath) {
     selectedDestPath = destPath;
     destinationField.value = destPath;
+    // Save destination path to localStorage
+    localStorage.setItem("savedDestinationPath", destPath);
   }
+});
+
+// Handle clear destination
+clearDestBtn.addEventListener("click", () => {
+  selectedDestPath = null;
+  destinationField.value = "";
+  localStorage.removeItem("savedDestinationPath");
 });
 
 // Handle form submission
@@ -45,10 +65,13 @@ exportForm.addEventListener("submit", async (e) => {
   exportBtn.disabled = true;
   exportBtn.textContent = "Exporting...";
 
+  const template = templateSelect.value;
+
   try {
     const result = await window.electronAPI.exportTranslation(
       selectedFilePath,
-      selectedDestPath
+      selectedDestPath,
+      template
     );
 
     if (result.success) {
